@@ -6,16 +6,15 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
-func (bs *BlockStore) flushBlockStore(batch dbm.Batch, base int64) error {
+func (bs *BlockStore) flushBlockStore(batch dbm.Batch, height int64) error {
 	bs.mtx.Lock()
-	bs.base = base
-	bs.height = base
+	bs.height = height
 	bs.mtx.Unlock()
 	bs.saveState()
 
 	err := batch.WriteSync()
 	if err != nil {
-		return fmt.Errorf("failed to prune up to height %v: %w", base, err)
+		return fmt.Errorf("failed to prune up to height %v: %w", height, err)
 	}
 	return nil
 }
